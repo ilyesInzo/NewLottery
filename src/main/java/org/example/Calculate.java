@@ -224,16 +224,13 @@ public class Calculate {
 
     }
 
-    private  void readHistories() throws IOException {
+    private List<Historic> readHistories() throws IOException {
         File file = new File(
-                Main.class.getClassLoader().getResource("histories_EuroJackpot.json").getFile());
+                Objects.requireNonNull(Main.class.getClassLoader().getResource("histories_EuroJackpot.json")).getFile());
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
-        CollectionType javaType = mapper.getTypeFactory()
-                .constructCollectionType(List.class, Historic.class);
-        List<Historic> asList = mapper.readValue(file, javaType);
-       // List<Historic> result = mapper.readValue(file, new TypeReference<List<Historic>>(){});
-        System.out.println(asList);
+        List<Historic> result = mapper.readValue(file, new TypeReference<List<Historic>>(){});
+        return result;
     }
 
 

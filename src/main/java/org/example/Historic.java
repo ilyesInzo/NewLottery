@@ -1,6 +1,37 @@
 package org.example;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import java.time.LocalDate;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Historic  {
-    private String date;
+    @JsonDeserialize(using=LocalDateDeserializer.class)
+    private LocalDate date;
     private String winningNumbers;
+
+    public Historic() {
+    }
+
+    public Historic(LocalDate date, String winningNumbers) {
+        this.date = date;
+        this.winningNumbers = winningNumbers;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getWinningNumbers() {
+        return winningNumbers;
+    }
+
+    @Override
+    public String toString() {
+        return "Historic{" +
+                "date=" + date +
+                ", winningNumbers='" + winningNumbers + '\'' +
+                '}';
+    }
 }
