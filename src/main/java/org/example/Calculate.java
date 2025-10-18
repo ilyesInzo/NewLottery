@@ -3,6 +3,7 @@ package org.example;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
 import java.io.File;
@@ -64,7 +65,9 @@ public class Calculate {
         List<Integer> allPossibleWinningNumbers = new ArrayList<>();
         List<Integer> allPossibleWinningStarNumbers = new ArrayList<>();
 
-        readHistories();
+        List<Historic> historics = readHistories();
+        historics.add(new Historic(LocalDate.now(), "0,1,2"));
+        writeHistories(historics);
 
         for (int i = 0; i < nbWinningLottery; i++) {
             Jackpot jackpot = getSpinJackpotResult(lottery, isFoundStar, listStar, listLottery);
@@ -231,6 +234,17 @@ public class Calculate {
         mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
         List<Historic> result = mapper.readValue(file, new TypeReference<List<Historic>>(){});
         return result;
+    }
+
+    private void writeHistories(List<Historic> result) throws IOException {
+        File file = new File(
+                Objects.requireNonNull(Main.class.getClassLoader().getResource("histories_EuroJackpot.json")).getFile());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
+        System.out.println("test");
+        String json = mapper.writeValueAsString(result);
+        System.out.println("Serialized JSON: " + json);
+        mapper.writeValue(file, result);
     }
 
 
