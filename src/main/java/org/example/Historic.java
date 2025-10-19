@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.LocalDate;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class Historic  {
-    @JsonDeserialize(using=LocalDateDeserializer.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Historic implements Comparable<Historic> {
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = CustomLocalDateSerializer.class)
     private LocalDate date;
     private String winningNumbers;
@@ -32,9 +32,11 @@ public class Historic  {
 
     @Override
     public String toString() {
-        return "Historic{" +
-                "date=" + date +
-                ", winningNumbers='" + winningNumbers + '\'' +
-                '}';
+        return "On %s %s with winning numbers %s".formatted(date.getDayOfWeek().toString(), date, winningNumbers);
+    }
+
+    @Override
+    public int compareTo(Historic o) {
+        return o.date.compareTo(this.date);
     }
 }

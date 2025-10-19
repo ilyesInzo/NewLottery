@@ -3,19 +3,21 @@ package org.example;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.CollectionType;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Calculate {
-    private final String TOKEN = "https://www.magayo.com/api/results.php?api_key=5GkNYH4HYQ4AvbEjpf&game=au_oz_lotto&draw=2019-03-10";
+    private final String TOKEN_EURO_JACKPOT = "https://www.magayo.com/api/results.php?api_key=mCVwFtv9c6DSDL2ESb&game=eurojackpot&draw=%s";
+    private final String TOKEN_6_AUS_49 = "https://www.magayo.com/api/results.php?api_key=mCVwFtv9c6DSDL2ESb&game=de_lotto&draw=%s";
+    private final String FilePath6Aus49 = "src/histories_6AUS49.json";
+    private final String FilePathEuroJackpot = "src/histories_EuroJackpot.json";
 
     public void execute() throws IOException {
         int nbWinningLottery = 100;
@@ -26,17 +28,7 @@ public class Calculate {
         boolean checkHistory = true;
         int generatedWinningStar = lottery.equals(Lottery.EURO_JACKPOT) ? 2 : 1;
         int generatedWinningNumber = lottery.equals(Lottery.EURO_JACKPOT) ? 5 : 6;
-
-        /*
-         * Calendar cal = Calendar.getInstance();
-         * cal.setFirstDayOfWeek(Calendar.MONDAY);
-         *
-         * cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-         * cal.add(Calendar.DAY_OF_WEEK, -7);
-         */
-        LocalDate today = LocalDate.now();
-        LocalDate lastMonday = today.with(TemporalAdjusters.previous(DayOfWeek.WEDNESDAY));
-        LocalDate lastFriday = today.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+        String filePath = lottery.equals(Lottery.EURO_JACKPOT) ? FilePathEuroJackpot : FilePath6Aus49;
 
         List<List<Integer>> listEuroLottery = List.of(
                 List.of(8, 12, 13, 49, 50),
@@ -65,9 +57,13 @@ public class Calculate {
         List<Integer> allPossibleWinningNumbers = new ArrayList<>();
         List<Integer> allPossibleWinningStarNumbers = new ArrayList<>();
 
-        List<Historic> historics = readHistories();
-        historics.add(new Historic(LocalDate.now(), "0,1,2"));
-        writeHistories(historics);
+        List<Historic> historics = readHistories(filePath);
+        /*historics.add(new Historic(LocalDate.now(), "0,1,2"));
+        historics.add(new Historic(LocalDate.now().minusWeeks(1), "0,1,2"));
+        historics.add(new Historic(LocalDate.now().plusWeeks(1), "0,1,2"));*/
+        historics = getEuroJackpotNewHistory(historics);
+
+        writeHistories(filePath, historics);
 
         for (int i = 0; i < nbWinningLottery; i++) {
             Jackpot jackpot = getSpinJackpotResult(lottery, isFoundStar, listStar, listLottery);
@@ -124,7 +120,7 @@ public class Calculate {
         return jackpot;
     }
 
-     Jackpot displayWinner6Aus49(boolean isFoundStar, List<Integer> lastStartList, List<List<Integer>> lastList) {
+    Jackpot displayWinner6Aus49(boolean isFoundStar, List<Integer> lastStartList, List<List<Integer>> lastList) {
         Random rand = new Random();
 
         List<Integer> baseList = new ArrayList<>();
@@ -148,8 +144,8 @@ public class Calculate {
         return jackpot;
     }
 
-    private  void GetResult(boolean isFoundStar, List<Integer> lastStartList, Random rand, List<Integer> baseList,
-                                  List<Integer> baseStartList, List<Integer> result, int numberOfElements, List<List<Integer>> lastList) {
+    private void GetResult(boolean isFoundStar, List<Integer> lastStartList, Random rand, List<Integer> baseList,
+                           List<Integer> baseStartList, List<Integer> result, int numberOfElements, List<List<Integer>> lastList) {
         lastList.forEach(integers -> baseList.removeIf(integers::contains));
         if (isFoundStar) {
             baseStartList.removeIf(lastStartList::contains);
@@ -165,8 +161,8 @@ public class Calculate {
 
     // if isFoundStar = true the lastStartList will not be taken into consideration
     // and not removed from waiting list
-    private  int whenToWin(List<Integer> winningChain, List<Integer> winningStarChain, int numberFound,
-                                 boolean isFoundStar, Lottery lottery, List<Integer> lastStartList, List<List<Integer>> lastList) {
+    private int whenToWin(List<Integer> winningChain, List<Integer> winningStarChain, int numberFound,
+                          boolean isFoundStar, Lottery lottery, List<Integer> lastStartList, List<List<Integer>> lastList) {
         int tryCount = 0;
         List<Integer> tries;
         boolean starFound;
@@ -186,8 +182,8 @@ public class Calculate {
         return tryCount;
     }
 
-    private  Jackpot getSpinJackpotResult(Lottery lottery, boolean isFoundStar, List<Integer> lastStartList,
-                                                List<List<Integer>> lastList) {
+    private Jackpot getSpinJackpotResult(Lottery lottery, boolean isFoundStar, List<Integer> lastStartList,
+                                         List<List<Integer>> lastList) {
         switch (lottery) {
             case EURO_JACKPOT -> {
                 return displayWinnerEuro(isFoundStar, lastStartList, lastList);
@@ -199,7 +195,7 @@ public class Calculate {
         throw new IllegalStateException("Not Implemented Lottery");
     }
 
-    private  void displayWinningBestOccurrence(List<Integer> allPossibleWinningNumbers, int limit) {
+    private void displayWinningBestOccurrence(List<Integer> allPossibleWinningNumbers, int limit) {
 
         Map<Integer, Integer> map = new HashMap<>();
         Set<Integer> winningSet = new HashSet<>(allPossibleWinningNumbers);
@@ -213,7 +209,7 @@ public class Calculate {
                 .forEach(System.out::println);
     }
 
-    private  void checkHistory(Lottery lottery, List<Integer> winningNumber) {
+    private void checkHistory(Lottery lottery, List<Integer> winningNumber) {
         List<List<Integer>> histories = lottery == Lottery.GERMAN_6AUS49 ? histories6AUS49Lottery
                 : historiesEuroJackpotLottery;
 
@@ -227,26 +223,93 @@ public class Calculate {
 
     }
 
-    private List<Historic> readHistories() throws IOException {
+    private List<Historic> readHistories(String filePath) throws IOException {
         File file = new File(
-                Objects.requireNonNull(Main.class.getClassLoader().getResource("histories_EuroJackpot.json")).getFile());
+                filePath);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
-        List<Historic> result = mapper.readValue(file, new TypeReference<List<Historic>>(){});
+        List<Historic> result = mapper.readValue(file, new TypeReference<List<Historic>>() {
+        });
+        Collections.sort(result);
         return result;
     }
 
-    private void writeHistories(List<Historic> result) throws IOException {
+    private void writeHistories(String filePath, List<Historic> result) throws IOException {
         File file = new File(
-                Objects.requireNonNull(Main.class.getClassLoader().getResource("histories_EuroJackpot.json")).getFile());
+                filePath);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
-        System.out.println("test");
-        String json = mapper.writeValueAsString(result);
-        System.out.println("Serialized JSON: " + json);
+        Collections.sort(result);
         mapper.writeValue(file, result);
     }
 
+    private List<Historic> getEuroJackpotNewHistory(List<Historic> histories) {
+        LocalDate today = LocalDate.now();
+        int maxDays = 0;
+        // maximum same two day of the week can be 9
+        int maxHistoryToRetrieve =
+                10 -
+                        (getNumberOfRemainingDayWeekInMonth(DayOfWeek.FRIDAY, today.getMonth()) +
+                                getNumberOfRemainingDayWeekInMonth(DayOfWeek.WEDNESDAY, today.getMonth()));
+
+        LocalDate lastFriday = today.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+        LocalDate lastWednesday = today.with(TemporalAdjusters.previous(DayOfWeek.WEDNESDAY));
+        LocalDate lastDraw, beforeLastDraw;
+
+        if (lastFriday.isAfter(lastWednesday)) {
+            lastDraw = lastFriday;
+            beforeLastDraw = lastWednesday;
+        } else {
+            lastDraw = lastWednesday;
+            beforeLastDraw = lastFriday;
+        }
+        List<Historic> newHistories = new ArrayList<>();
+        // we are allowed to send max 10 request every month
+        // it is enough to get maximum the last 6 draw (3 weeks)
+
+        while (maxDays < maxHistoryToRetrieve) {
+            Historic newHistory;
+            newHistory = fetchHistoricByDate(histories, lastDraw);
+            if (newHistory == null) {
+                break;
+            }
+            newHistories.add(newHistory);
+            newHistory = fetchHistoricByDate(histories, beforeLastDraw);
+            maxDays++;
+            if (newHistory == null || maxDays >= maxHistoryToRetrieve) {
+                break;
+            }
+            newHistories.add(newHistory);
+            maxDays++;
+            lastDraw = lastDraw.minusWeeks(1);
+            beforeLastDraw = beforeLastDraw.minusWeeks(1);
+        }
+        histories.addAll(newHistories);
+        Collections.sort(histories);
+        System.out.println("Adding " + histories.size() + " histories");
+        return histories;
+    }
+
+    private Historic fetchHistoricByDate(List<Historic> histories, LocalDate date) {
+        boolean exist = histories.stream().anyMatch(historic -> historic.getDate().equals(date));
+        if (exist) {
+            return null;
+        }
+        // TODO call api
+        return new Historic(date, "");
+    }
+
+    private int getNumberOfRemainingDayWeekInMonth(DayOfWeek dayOfWeek, Month month) {
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.with(TemporalAdjusters.nextOrSame(dayOfWeek));
+        int count = 0;
+        while (startDate.getMonth().equals(month)) {
+            count++;
+            startDate = startDate.plusWeeks(1);
+        }
+
+        return count;
+    }
 
     static final List<List<Integer>> histories6AUS49Lottery = List.of(
             List.of(12, 22, 24, 31, 35, 40), // 7 27.09.2025
