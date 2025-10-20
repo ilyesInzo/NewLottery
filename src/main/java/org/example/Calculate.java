@@ -20,20 +20,29 @@ public class Calculate {
     private final String FilePathEuroJackpot = "src/histories_EuroJackpot.json";
 
     public void execute() throws IOException {
-        int nbWinningLottery = 100;
+        int nbWinningLottery = 1;
         boolean isFoundStar = true;
         int winningNumberFound = 5;
         Lottery lottery = Lottery.EURO_JACKPOT;
         boolean showPropa = false;
-        boolean checkHistory = true;
+        boolean checkHistory = false;
+        boolean generateNumber = true;
         int generatedWinningStar = lottery.equals(Lottery.EURO_JACKPOT) ? 2 : 1;
         int generatedWinningNumber = lottery.equals(Lottery.EURO_JACKPOT) ? 5 : 6;
         String filePath = lottery.equals(Lottery.EURO_JACKPOT) ? FilePathEuroJackpot : FilePath6Aus49;
+        List<Historic> currentHistories = readHistories(filePath);
+        List<Historic> newHistories = getEuroJackpotNewHistory(currentHistories);
+
+        List<List<Integer>> listLottery = new ArrayList<>(newHistories.stream()
+                .map(historic -> Arrays.stream(historic.getWinningNumbers().split(","))
+                        .map(Integer::valueOf)
+                        .limit(generatedWinningNumber)
+                        .toList())
+                .limit(3)
+                .toList());
+        writeHistories(filePath, newHistories);
 
         List<List<Integer>> listEuroLottery = List.of(
-                List.of(8, 12, 13, 49, 50),
-                List.of(4, 5, 24, 31, 41),
-                List.of(10, 22, 38, 42, 48),
                 List.of(1, 2, 49, 50),
                 List.of(24, 25, 19, 30, 31, 32, 36));
         List<Integer> listEuroStar = List.of(2, 4);
@@ -41,15 +50,11 @@ public class Calculate {
         List<Integer> winningEuroStar = List.of(3, 10);
 
         List<List<Integer>> list6AUS49Lottery = List.of(
-                List.of(9, 12, 14, 32, 37, 41),
-                List.of(6, 11, 16, 27, 29, 33),
-                List.of(6, 13, 15, 19, 43, 44),
                 List.of(1, 2, 48, 49));
         List<Integer> list6AUS49Star = List.of(0, 9, 8);
         List<Integer> winning6AUS49Number = List.of(11, 12, 13, 20, 27, 43);
         List<Integer> winning6AUS49Star = List.of(5);
-
-        List<List<Integer>> listLottery = lottery == Lottery.GERMAN_6AUS49 ? list6AUS49Lottery : listEuroLottery;
+        listLottery.addAll(lottery == Lottery.GERMAN_6AUS49 ? list6AUS49Lottery : listEuroLottery);
         List<Integer> listStar = lottery == Lottery.GERMAN_6AUS49 ? list6AUS49Star : listEuroStar;
         List<Integer> winningNumber = lottery == Lottery.GERMAN_6AUS49 ? winning6AUS49Number : winningEuroNumber;
         List<Integer> winningStar = lottery == Lottery.GERMAN_6AUS49 ? winning6AUS49Star : winningEuroStar;
@@ -57,24 +62,17 @@ public class Calculate {
         List<Integer> allPossibleWinningNumbers = new ArrayList<>();
         List<Integer> allPossibleWinningStarNumbers = new ArrayList<>();
 
-        List<Historic> historics = readHistories(filePath);
-        /*historics.add(new Historic(LocalDate.now(), "0,1,2"));
-        historics.add(new Historic(LocalDate.now().minusWeeks(1), "0,1,2"));
-        historics.add(new Historic(LocalDate.now().plusWeeks(1), "0,1,2"));*/
-        historics = getEuroJackpotNewHistory(historics);
-
-        writeHistories(filePath, historics);
-
-        for (int i = 0; i < nbWinningLottery; i++) {
-            Jackpot jackpot = getSpinJackpotResult(lottery, isFoundStar, listStar, listLottery);
-            allPossibleWinningNumbers.addAll(jackpot.winningChain);
-            allPossibleWinningStarNumbers.addAll(jackpot.winningStarChain);
-            System.out.println(jackpot);
+        if (generateNumber) {
+            for (int i = 0; i < nbWinningLottery; i++) {
+                Jackpot jackpot = getSpinJackpotResult(lottery, isFoundStar, listStar, listLottery);
+                allPossibleWinningNumbers.addAll(jackpot.winningChain);
+                allPossibleWinningStarNumbers.addAll(jackpot.winningStarChain);
+            }
+            System.out.println("Winning Numbers Occ");
+            displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
+            System.out.println("Winning Stars Occ");
+            displayWinningBestOccurrence(allPossibleWinningStarNumbers, generatedWinningStar);
         }
-        System.out.println("Winning Numbers Occ");
-        displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
-        System.out.println("Winning Stars Occ");
-        displayWinningBestOccurrence(allPossibleWinningStarNumbers, generatedWinningStar);
 
         if (showPropa) {
             double tryCount = 0;
@@ -87,9 +85,7 @@ public class Calculate {
         }
 
         if (checkHistory) {
-
             checkHistory(lottery, winningNumber);
-
         }
     }
 
@@ -286,7 +282,7 @@ public class Calculate {
         }
         histories.addAll(newHistories);
         Collections.sort(histories);
-        System.out.println("Adding " + histories.size() + " histories");
+        System.out.println("Adding " + newHistories.size() + " new histories");
         return histories;
     }
 
@@ -296,7 +292,7 @@ public class Calculate {
             return null;
         }
         // TODO call api
-        return new Historic(date, "");
+        return new Historic(date, "03,08,19,26,27,3,10");
     }
 
     private int getNumberOfRemainingDayWeekInMonth(DayOfWeek dayOfWeek, Month month) {
@@ -326,6 +322,7 @@ public class Calculate {
             List.of(18, 22, 25, 31, 45, 45));// 9 15.02.2025
 
     static final List<List<Integer>> historiesEuroJackpotLottery = List.of(
+            List.of(14, 18, 28, 33, 37), // 1,8 17.10.2025
             List.of(7, 15, 26, 29, 35), // 4,6 14.10.2025
             List.of(6, 15, 26, 29, 35), // 4,6 10.10.2025
             List.of(10, 34, 42, 45, 47), // 4,6 03.10.2025
@@ -340,6 +337,4 @@ public class Calculate {
             List.of(12, 14, 27, 39, 47), // 1,5 19.08.2025
             List.of(8, 24, 31, 39, 41), // 9,10 22.04.2025
             List.of(7, 17, 27, 29, 34));// 4,12 14.03.2025
-
-
 }
