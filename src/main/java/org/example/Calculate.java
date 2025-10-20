@@ -6,6 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
@@ -26,12 +31,12 @@ public class Calculate {
         Lottery lottery = Lottery.EURO_JACKPOT;
         boolean showPropa = false;
         boolean checkHistory = false;
-        boolean generateNumber = true;
+        boolean generateNumber = false;
         int generatedWinningStar = lottery.equals(Lottery.EURO_JACKPOT) ? 2 : 1;
         int generatedWinningNumber = lottery.equals(Lottery.EURO_JACKPOT) ? 5 : 6;
         String filePath = lottery.equals(Lottery.EURO_JACKPOT) ? FilePathEuroJackpot : FilePath6Aus49;
         List<Historic> currentHistories = readHistories(filePath);
-        List<Historic> newHistories = getEuroJackpotNewHistory(currentHistories);
+        List<Historic> newHistories = getNewHistories(lottery, currentHistories);
 
         List<List<Integer>> listLottery = new ArrayList<>(newHistories.stream()
                 .map(historic -> Arrays.stream(historic.getWinningNumbers().split(","))
@@ -239,17 +244,19 @@ public class Calculate {
         mapper.writeValue(file, result);
     }
 
-    private List<Historic> getEuroJackpotNewHistory(List<Historic> histories) {
+    private List<Historic> getNewHistories(Lottery lottery, List<Historic> histories) {
         LocalDate today = LocalDate.now();
         int maxDays = 0;
+        DayOfWeek dayOfWeek1 = lottery.equals(Lottery.EURO_JACKPOT) ? DayOfWeek.FRIDAY : DayOfWeek.SATURDAY;
+        DayOfWeek dayOfWeek2 = lottery.equals(Lottery.EURO_JACKPOT) ? DayOfWeek.TUESDAY : DayOfWeek.WEDNESDAY;
         // maximum same two day of the week can be 9
         int maxHistoryToRetrieve =
                 10 -
-                        (getNumberOfRemainingDayWeekInMonth(DayOfWeek.FRIDAY, today.getMonth()) +
-                                getNumberOfRemainingDayWeekInMonth(DayOfWeek.WEDNESDAY, today.getMonth()));
+                        (getNumberOfRemainingDayWeekInMonth(dayOfWeek1, today.getMonth()) +
+                                getNumberOfRemainingDayWeekInMonth(dayOfWeek2, today.getMonth()));
 
-        LocalDate lastFriday = today.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
-        LocalDate lastWednesday = today.with(TemporalAdjusters.previous(DayOfWeek.WEDNESDAY));
+        LocalDate lastFriday = today.with(TemporalAdjusters.previous(dayOfWeek1));
+        LocalDate lastWednesday = today.with(TemporalAdjusters.previous(dayOfWeek2));
         LocalDate lastDraw, beforeLastDraw;
 
         if (lastFriday.isAfter(lastWednesday)) {
@@ -265,12 +272,12 @@ public class Calculate {
 
         while (maxDays < maxHistoryToRetrieve) {
             Historic newHistory;
-            newHistory = fetchHistoricByDate(histories, lastDraw);
+            newHistory = fetchHistoricByDate(lottery, histories, lastDraw);
             if (newHistory == null) {
                 break;
             }
             newHistories.add(newHistory);
-            newHistory = fetchHistoricByDate(histories, beforeLastDraw);
+            newHistory = fetchHistoricByDate(lottery, histories, beforeLastDraw);
             maxDays++;
             if (newHistory == null || maxDays >= maxHistoryToRetrieve) {
                 break;
@@ -286,13 +293,37 @@ public class Calculate {
         return histories;
     }
 
-    private Historic fetchHistoricByDate(List<Historic> histories, LocalDate date) {
+    private Historic fetchHistoricByDate(Lottery lottery, List<Historic> histories, LocalDate date) {
         boolean exist = histories.stream().anyMatch(historic -> historic.getDate().equals(date));
         if (exist) {
             return null;
         }
-        // TODO call api
-        return new Historic(date, "03,08,19,26,27,3,10");
+        try {
+            // TODO replace with URL
+            String url = (lottery.equals(Lottery.EURO_JACKPOT) ? TOKEN_EURO_JACKPOT : TOKEN_6_AUS_49).formatted(date);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI("https://api.github.com/users/mojombo"))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newBuilder()
+                    .build()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
+            MagayoLotteryApi result = mapper.readValue(response.body(), MagayoLotteryApi.class);
+
+            if ("0".equals(result.getError())) {
+                return new Historic(result.getDate(), result.getWinningNumbers());
+            } else {
+                System.out.println("Got Error" + result.getError());
+            }
+
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     private int getNumberOfRemainingDayWeekInMonth(DayOfWeek dayOfWeek, Month month) {
