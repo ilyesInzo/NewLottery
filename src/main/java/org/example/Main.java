@@ -1,5 +1,10 @@
 package org.example;
 
+import org.example.config.LotteryConfig;
+import org.example.factory.EuroJackpotLotteryFactory;
+import org.example.factory.GermanLottoLotteryFactory;
+import org.example.factory.LotteryFactory;
+
 import java.io.IOException;
 
 public class Main {
@@ -8,7 +13,11 @@ public class Main {
         Calculate ca = new Calculate();
         try {
             ca.execute();
-        } catch (IOException e) {
+
+            /*LotteryFactory lotteryFactory = new EuroJackpotLotteryFactory();
+            lotteryFactory.executeLottery(new LotteryConfig());*/
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -9,17 +9,17 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class CustomLocalDateSerializer
+public class LocalDateSerializer
         extends StdSerializer<LocalDate> {
 
     private static DateTimeFormatter formatter =
             DateTimeFormatter.ISO_LOCAL_DATE;
 
-    public CustomLocalDateSerializer() {
+    public LocalDateSerializer() {
         this(null);
     }
 
-    public CustomLocalDateSerializer(Class<LocalDate> t) {
+    public LocalDateSerializer(Class<LocalDate> t) {
         super(t);
     }
 
