@@ -58,6 +58,16 @@ public abstract class Lottery {
         System.out.println("For " + winningNumber + " Max numbers found '" + entry.getKey() + "' in my histories \n" + entry.getValue());
     }
 
+    public void showWinningProbability(int nbWinningLottery, int winningNumberFound, boolean isFoundStar) {
+        double tryCount = 0;
+        for (int i = 0; i < nbWinningLottery; i++) {
+            tryCount = tryCount
+                    + ((double) 1 / whenToWin(winningNumber, winningStar, winningNumberFound, isFoundStar,
+                    listExcludeLotteryStar, listExcludeLotteryNumber));
+        }
+        System.out.println(tryCount / nbWinningLottery);
+    }
+
     protected void GetResult(boolean isFoundStar, List<Integer> lastStartList, Random rand, List<Integer> baseList,
                              List<Integer> baseStartList, List<Integer> result, int numberOfElements, List<List<Integer>> lastList) {
         lastList.forEach(integers -> baseList.removeIf(integers::contains));
@@ -87,5 +97,26 @@ public abstract class Lottery {
                 .sorted(Map.Entry.comparingByValue((integer, t1) -> t1 - integer))
                 .limit(limit)
                 .forEach(System.out::println);
+    }
+
+    private int whenToWin(List<Integer> winningChain, List<Integer> winningStarChain, int numberFound,
+                          boolean isFoundStar, List<Integer> lastStartList, List<List<Integer>> lastList) {
+        int tryCount = 0;
+        List<Integer> tries;
+        boolean starFound;
+        Jackpot jackpot;
+        do {
+            jackpot = getSpinJackpotResult(isFoundStar, lastStartList, lastList);
+            List<Integer> result = jackpot.getWinningChain();
+            List<Integer> resulStart = jackpot.getWinningStarChain();
+            tries = result.stream().filter(winningChain::contains).collect(Collectors.toList());
+            starFound = !isFoundStar || resulStart.stream().filter(winningStarChain::contains)
+                    .collect(Collectors.toSet()).size() == winningStarChain.size();
+            tryCount++;
+
+        } while (tries.size() < numberFound || !starFound);
+        tries.sort(Integer::compareTo);
+        System.out.println(jackpot + " found after " + tryCount + " tries, with common values : " + tries);
+        return tryCount;
     }
 }

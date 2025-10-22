@@ -13,6 +13,10 @@ public abstract class LotteryFactory {
         if (config.isGenerateNumber()) {
             lottery.generateLottery(config.getNbWinningLottery(), config.isFindStars());
         }
+
+        if (config.isShowProbability()) {
+            lottery.showWinningProbability(config.getNbWinningLottery(), config.getWinningNumberFound(), config.isFindStars());
+        }
     }
 
     protected abstract Lottery createLottery(LotteryConfig config) throws Exception;

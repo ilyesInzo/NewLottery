@@ -7,10 +7,11 @@ import java.util.List;
 public class LotteryConfig {
     private Lottery lottery;
 
-    private boolean showProbability = false;
+    private boolean showProbability = true;
     private boolean checkMyHistory = false;
+    // TODO new
     private boolean checkLotteryHistory = false;
-    private boolean generateNumber = true;
+    private boolean generateNumber = false;
 
     private int nbWinningLottery = 100;
     private int winningNumberFound = 5;
