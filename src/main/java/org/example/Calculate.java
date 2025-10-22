@@ -3,6 +3,7 @@ package org.example;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.model.Jackpot;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,8 +71,8 @@ public class Calculate {
         if (generateNumber) {
             for (int i = 0; i < nbWinningLottery; i++) {
                 Jackpot jackpot = getSpinJackpotResult(lottery, isFoundStar, listStar, listLottery);
-                allPossibleWinningNumbers.addAll(jackpot.winningChain);
-                allPossibleWinningStarNumbers.addAll(jackpot.winningStarChain);
+                allPossibleWinningNumbers.addAll(jackpot.getWinningChain());
+                allPossibleWinningStarNumbers.addAll(jackpot.getWinningStarChain());
             }
             System.out.println("Winning Numbers Occ");
             displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
@@ -116,8 +117,8 @@ public class Calculate {
         resultStart.add(chosenValue);
 
         Jackpot jackpot = new Jackpot();
-        jackpot.winningChain = result;
-        jackpot.winningStarChain = resultStart;
+        jackpot.setWinningChain(result);
+        jackpot.setWinningStarChain(resultStart);
         return jackpot;
     }
 
@@ -140,8 +141,8 @@ public class Calculate {
         Integer chosenValue = baseStartList.remove(randomIndex);
         resultStart.add(chosenValue);
         Jackpot jackpot = new Jackpot();
-        jackpot.winningChain = result;
-        jackpot.winningStarChain = resultStart;
+        jackpot.setWinningChain(result);
+        jackpot.setWinningStarChain(resultStart);
         return jackpot;
     }
 
@@ -170,8 +171,8 @@ public class Calculate {
         Jackpot jackpot;
         do {
             jackpot = getSpinJackpotResult(lottery, isFoundStar, lastStartList, lastList);
-            List<Integer> result = jackpot.winningChain;
-            List<Integer> resulStart = jackpot.winningStarChain;
+            List<Integer> result = jackpot.getWinningChain();
+            List<Integer> resulStart = jackpot.getWinningStarChain();
             tries = result.stream().filter(winningChain::contains).collect(Collectors.toList());
             starFound = !isFoundStar || resulStart.stream().filter(winningStarChain::contains)
                     .collect(Collectors.toSet()).size() == winningStarChain.size();

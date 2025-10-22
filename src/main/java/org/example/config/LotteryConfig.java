@@ -1,14 +1,23 @@
 package org.example.config;
 
+import org.example.Lottery;
+
+import java.util.List;
+
 public class LotteryConfig {
+    private Lottery lottery;
+
     private boolean showProbability = false;
     private boolean checkMyHistory = false;
     private boolean checkLotteryHistory = false;
-    private boolean generateNumber = false;
+    private boolean generateNumber = true;
 
     private int nbWinningLottery = 100;
     private int winningNumberFound = 5;
     private boolean findStars = false;
+
+    private List<Integer> winningNumber;
+    private List<Integer> winningStar;
 
     public int getWinningNumberFound() {
         return winningNumberFound;
@@ -66,4 +75,27 @@ public class LotteryConfig {
         this.findStars = findStars;
     }
 
+    public List<Integer> getWinningNumber() {
+        return winningNumber;
+    }
+
+    public void setWinningNumber(List<Integer> winningNumber) {
+        this.winningNumber = winningNumber;
+    }
+
+    public List<Integer> getWinningStar() {
+        return winningStar;
+    }
+
+    public void setWinningStar(List<Integer> winningStar) {
+        this.winningStar = winningStar;
+    }
+
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
 }
