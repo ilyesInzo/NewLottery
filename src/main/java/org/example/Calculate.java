@@ -3,7 +3,9 @@ package org.example;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.model.Historic;
 import org.example.model.Jackpot;
+import org.example.model.MagayoLottery;
 
 import java.io.File;
 import java.io.IOException;
@@ -313,7 +315,7 @@ public class Calculate {
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
-            MagayoLotteryApi result = mapper.readValue(response.body(), MagayoLotteryApi.class);
+            MagayoLottery result = mapper.readValue(response.body(), MagayoLottery.class);
 
             if ("0".equals(result.getError())) {
                 return new Historic(result.getDate(), result.getWinningNumbers());

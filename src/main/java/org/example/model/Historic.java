@@ -1,8 +1,10 @@
-package org.example;
+package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.example.helper.LocalDateDeserializer;
+import org.example.helper.LocalDateSerializer;
 
 import java.time.LocalDate;
 

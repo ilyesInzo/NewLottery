@@ -1,13 +1,14 @@
-package org.example;
+package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.example.helper.LocalDateDeserializer;
 
 import java.time.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MagayoLotteryApi {
+public class MagayoLottery {
     private String error;
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonAlias("draw")
@@ -15,10 +16,10 @@ public class MagayoLotteryApi {
     @JsonAlias("results")
     private String winningNumbers;
 
-    public MagayoLotteryApi() {
+    public MagayoLottery() {
     }
 
-    public MagayoLotteryApi(String error, LocalDate date, String winningNumbers) {
+    public MagayoLottery(String error, LocalDate date, String winningNumbers) {
         this.error = error;
         this.date = date;
         this.winningNumbers = winningNumbers;

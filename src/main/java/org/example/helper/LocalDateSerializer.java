@@ -1,4 +1,4 @@
-package org.example;
+package org.example.helper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,5 +1,7 @@
 package org.example.dto;
 
+import org.example.helper.HistoricService;
+import org.example.helper.MagayoLotteryApiService;
 import org.example.model.Jackpot;
 
 import java.util.*;
@@ -15,6 +17,8 @@ public abstract class Lottery {
     private List<List<Integer>> myLotteryHistory;
     private int generatedWinningNumber;
     private int generatedWinningStar;
+    private HistoricService historicService;
+    private MagayoLotteryApiService magayoLotteryApiService;
 
     public Lottery(String filePath,
                    List<List<Integer>> listExcludeLotteryNumber,
@@ -32,6 +36,8 @@ public abstract class Lottery {
         this.myLotteryHistory = myLotteryHistory;
         this.generatedWinningNumber = generatedWinningNumber;
         this.generatedWinningStar = generatedWinningStar;
+        this.historicService = new HistoricService();
+        this.magayoLotteryApiService = new MagayoLotteryApiService();
     }
 
     public void generateLottery(int nbWinningLottery, boolean isFoundStar) {
