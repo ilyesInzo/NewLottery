@@ -4,12 +4,15 @@ import org.example.helper.HistoricService;
 import org.example.helper.MagayoLotteryApiService;
 import org.example.model.Jackpot;
 
+import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class Lottery {
 
     private String filePath;
+    private String url;
+
     private List<List<Integer>> listExcludeLotteryNumber;
     private List<Integer> listExcludeLotteryStar;
     private List<Integer> winningNumber;
@@ -17,10 +20,11 @@ public abstract class Lottery {
     private List<List<Integer>> myLotteryHistory;
     private int generatedWinningNumber;
     private int generatedWinningStar;
-    private HistoricService historicService;
-    private MagayoLotteryApiService magayoLotteryApiService;
+
+    private final HistoricService historicService;
 
     public Lottery(String filePath,
+                   String url,
                    List<List<Integer>> listExcludeLotteryNumber,
                    List<Integer> listExcludeLotteryStar,
                    List<List<Integer>> myLotteryHistory,
@@ -29,6 +33,7 @@ public abstract class Lottery {
                    int generatedWinningNumber,
                    int generatedWinningStar) {
         this.filePath = filePath;
+        this.url = url;
         this.listExcludeLotteryNumber = listExcludeLotteryNumber;
         this.listExcludeLotteryStar = listExcludeLotteryStar;
         this.winningNumber = winningNumber;
@@ -37,7 +42,7 @@ public abstract class Lottery {
         this.generatedWinningNumber = generatedWinningNumber;
         this.generatedWinningStar = generatedWinningStar;
         this.historicService = new HistoricService();
-        this.magayoLotteryApiService = new MagayoLotteryApiService();
+        this.historicService.loadHistories(this.filePath, this.url, getLotteryDays());
     }
 
     public void generateLottery(int nbWinningLottery, boolean isFoundStar) {
@@ -90,6 +95,8 @@ public abstract class Lottery {
     }
 
     protected abstract Jackpot getSpinJackpotResult(boolean isFoundStar, List<Integer> listExcludeLotteryStar, List<List<Integer>> listExcludeLotteryNumber);
+
+    protected abstract Map.Entry<DayOfWeek, DayOfWeek> getLotteryDays();
 
     private void displayWinningBestOccurrence(List<Integer> allPossibleWinningNumbers, int limit) {
 

@@ -2,13 +2,10 @@ package org.example.helper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.Lottery;
 import org.example.model.Historic;
 import org.example.model.MagayoLottery;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -17,15 +14,13 @@ import java.util.List;
 
 public class MagayoLotteryApiService {
 
-    private Historic fetchHistoricByDate(String url, Lottery lottery, List<Historic> histories, LocalDate date) {
+    public Historic fetchHistoricByDate(String url, List<Historic> histories, LocalDate date) {
         boolean exist = histories.stream().anyMatch(historic -> historic.getDate().equals(date));
+        url = url.formatted(date);
         if (exist) {
             return null;
         }
         try {
-            // TODO replace with URL
-            //(lottery.equals(Lottery.EURO_JACKPOT) ? TOKEN_EURO_JACKPOT : TOKEN_6_AUS_49)
-            url = url.formatted(date);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("https://api.github.com/users/mojombo"))
                     .GET()
@@ -42,11 +37,11 @@ public class MagayoLotteryApiService {
             if ("0".equals(result.getError())) {
                 return new Historic(result.getDate(), result.getWinningNumbers());
             } else {
-                System.out.println("Got Error" + result.getError());
+                System.out.println("Got Error " + result.getError());
             }
 
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            System.out.println("Got Error while requesting Magayo Lottery" + e.getMessage());
         }
         return null;
     }

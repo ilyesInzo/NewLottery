@@ -2,13 +2,13 @@ package org.example.dto;
 
 import org.example.model.Jackpot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.time.DayOfWeek;
+import java.util.*;
 
 public class GermanLottoLottery extends Lottery {
 
     private final static String filePath = "src/histories_6AUS49.json";
+    private final static String url = "https://www.magayo.com/api/results.php?api_key=mCVwFtv9c6DSDL2ESb&game=de_lotto&draw=%s";
     private final static List<List<Integer>> listExcludeLotteryNumber = List.of(
             List.of(1, 2, 48, 49));
     private final static List<Integer> listExcludeLotteryStar = List.of(0, 9);
@@ -16,7 +16,7 @@ public class GermanLottoLottery extends Lottery {
     private final static int generatedWinningStar = 1;
 
     public GermanLottoLottery(List<Integer> winningNumber, List<Integer> winningStar) {
-        super(filePath, listExcludeLotteryNumber, listExcludeLotteryStar, myLotteryHistory, winningNumber, winningStar, generatedWinningNumber, generatedWinningStar);
+        super(filePath, url, listExcludeLotteryNumber, listExcludeLotteryStar, myLotteryHistory, winningNumber, winningStar, generatedWinningNumber, generatedWinningStar);
     }
 
     @Override
@@ -43,6 +43,11 @@ public class GermanLottoLottery extends Lottery {
         jackpot.setWinningStarChain(resultStart);
 
         return jackpot;
+    }
+
+    @Override
+    protected Map.Entry<DayOfWeek, DayOfWeek> getLotteryDays() {
+        return new AbstractMap.SimpleEntry<>(DayOfWeek.SATURDAY, DayOfWeek.WEDNESDAY);
     }
 
     private final static List<List<Integer>> myLotteryHistory = List.of(

@@ -7,7 +7,7 @@ import java.util.List;
 public class LotteryConfig {
     private Lottery lottery;
 
-    private boolean showProbability = true;
+    private boolean showProbability = false;
     private boolean checkMyHistory = false;
     // TODO new
     private boolean checkLotteryHistory = false;
