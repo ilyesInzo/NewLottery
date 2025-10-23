@@ -9,12 +9,10 @@ import java.util.List;
 
 public class Main {
     private static Lottery lottery = Lottery.EURO_JACKPOT;
-    
+
     public static void main(String[] args) {
 
-        Calculate ca = new Calculate();
         try {
-            //ca.execute();
             LotteryConfig config = getConfig();
             LotteryFactory lotteryFactory = switch (config.getLottery()) {
                 case EURO_JACKPOT -> new EuroJackpotLotteryFactory();
