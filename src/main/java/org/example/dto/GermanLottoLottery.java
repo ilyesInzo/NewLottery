@@ -8,15 +8,15 @@ import java.util.*;
 public class GermanLottoLottery extends Lottery {
 
     private final static String filePath = "src/histories_6AUS49.json";
-    private final static String url = "https://www.magayo.com/api/results.php?api_key=mCVwFtv9c6DSDL2ESb&game=de_lotto&draw=%s";
+    private final static String url = "https://www.magayo.com/api/results.php?api_key=5GkNYH4HYQ4AvbEjpf&game=de_lotto&draw=%s";
     private final static List<List<Integer>> listExcludeLotteryNumber = List.of(
             List.of(1, 2, 48, 49));
     private final static List<Integer> listExcludeLotteryStar = List.of(0, 9);
     private final static int generatedWinningNumber = 6;
     private final static int generatedWinningStar = 1;
 
-    public GermanLottoLottery(List<Integer> winningNumber, List<Integer> winningStar) {
-        super(filePath, url, listExcludeLotteryNumber, listExcludeLotteryStar, myLotteryHistory, winningNumber, winningStar, generatedWinningNumber, generatedWinningStar);
+    public GermanLottoLottery(List<Integer> winningNumber, List<Integer> winningStar, int nbExcludeWinningNumber) {
+        super(filePath, url, listExcludeLotteryNumber, listExcludeLotteryStar, myLotteryHistory, winningNumber, winningStar, nbExcludeWinningNumber, generatedWinningNumber, generatedWinningStar);
     }
 
     @Override

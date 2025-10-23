@@ -5,13 +5,11 @@ import org.example.factory.EuroJackpotLotteryFactory;
 import org.example.factory.GermanLottoLotteryFactory;
 import org.example.factory.LotteryFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 public class Main {
     private static Lottery lottery = Lottery.EURO_JACKPOT;
-
-
+    
     public static void main(String[] args) {
 
         Calculate ca = new Calculate();
@@ -42,7 +40,6 @@ public class Main {
                 config.setWinningNumber(List.of(11, 12, 13, 20, 27, 43));
             }
         }
-        ;
         return config;
     }
 }

@@ -16,13 +16,12 @@ public class MagayoLotteryApiService {
 
     public Historic fetchHistoricByDate(String url, List<Historic> histories, LocalDate date) {
         boolean exist = histories.stream().anyMatch(historic -> historic.getDate().equals(date));
-        url = url.formatted(date);
         if (exist) {
             return null;
         }
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.github.com/users/mojombo"))
+                    .uri(new URI(url.formatted(date)))
                     .GET()
                     .build();
 

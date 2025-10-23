@@ -11,10 +11,11 @@ public class LotteryConfig {
     private boolean checkMyHistory = false;
     // TODO new
     private boolean checkLotteryHistory = false;
-    private boolean generateNumber = false;
+    private boolean generateNumber = true;
 
     private int nbWinningLottery = 100;
     private int winningNumberFound = 5;
+    private int nbExcludeWinningNumber = 5;
     private boolean findStars = false;
 
     private List<Integer> winningNumber;
@@ -98,5 +99,13 @@ public class LotteryConfig {
 
     public void setLottery(Lottery lottery) {
         this.lottery = lottery;
+    }
+
+    public int getNbExcludeWinningNumber() {
+        return nbExcludeWinningNumber;
+    }
+
+    public void setNbExcludeWinningNumber(int nbExcludeWinningNumber) {
+        this.nbExcludeWinningNumber = nbExcludeWinningNumber;
     }
 }

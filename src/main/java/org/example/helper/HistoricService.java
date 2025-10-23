@@ -21,10 +21,11 @@ public class HistoricService {
 
     private final MagayoLotteryApiService magayoLotteryApiService = new MagayoLotteryApiService();
 
-    public void loadHistories(String filePath, String url, Map.Entry<DayOfWeek, DayOfWeek> dayOfWeeks) {
+    public List<Historic> loadHistories(String filePath, String url, Map.Entry<DayOfWeek, DayOfWeek> dayOfWeeks) {
         List<Historic> histories = readHistories(filePath);
         List<Historic> newHistories = getNewHistories(url, histories, dayOfWeeks);
         writeHistories(filePath, newHistories);
+        return newHistories;
     }
 
     private List<Historic> getNewHistories(String url, List<Historic> histories, Map.Entry<DayOfWeek, DayOfWeek> dayOfWeeks) {
@@ -101,7 +102,7 @@ public class HistoricService {
         mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, true);
         Collections.sort(result);
         try {
-            mapper.writeValue(file, result);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(file, result);
         } catch (IOException e) {
             System.out.println("Error Writing To History File");
         }

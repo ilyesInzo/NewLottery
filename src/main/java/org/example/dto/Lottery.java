@@ -1,7 +1,7 @@
 package org.example.dto;
 
 import org.example.helper.HistoricService;
-import org.example.helper.MagayoLotteryApiService;
+import org.example.model.Historic;
 import org.example.model.Jackpot;
 
 import java.time.DayOfWeek;
@@ -20,6 +20,9 @@ public abstract class Lottery {
     private List<List<Integer>> myLotteryHistory;
     private int generatedWinningNumber;
     private int generatedWinningStar;
+    private int nbExcludeWinningNumber;
+
+    private List<Historic> Histories;
 
     private final HistoricService historicService;
 
@@ -30,19 +33,22 @@ public abstract class Lottery {
                    List<List<Integer>> myLotteryHistory,
                    List<Integer> winningNumber,
                    List<Integer> winningStar,
+                   int nbExcludeWinningNumber,
                    int generatedWinningNumber,
                    int generatedWinningStar) {
         this.filePath = filePath;
         this.url = url;
-        this.listExcludeLotteryNumber = listExcludeLotteryNumber;
-        this.listExcludeLotteryStar = listExcludeLotteryStar;
+        this.listExcludeLotteryNumber = new ArrayList<>(listExcludeLotteryNumber);
+        this.listExcludeLotteryStar = new ArrayList<>(listExcludeLotteryStar);
         this.winningNumber = winningNumber;
         this.winningStar = winningStar;
         this.myLotteryHistory = myLotteryHistory;
         this.generatedWinningNumber = generatedWinningNumber;
         this.generatedWinningStar = generatedWinningStar;
+        this.nbExcludeWinningNumber = nbExcludeWinningNumber;
         this.historicService = new HistoricService();
-        this.historicService.loadHistories(this.filePath, this.url, getLotteryDays());
+        this.Histories = this.historicService.loadHistories(this.filePath, this.url, getLotteryDays());
+        extendExcludeList();
     }
 
     public void generateLottery(int nbWinningLottery, boolean isFoundStar) {
@@ -131,5 +137,33 @@ public abstract class Lottery {
         tries.sort(Integer::compareTo);
         System.out.println(jackpot + " found after " + tryCount + " tries, with common values : " + tries);
         return tryCount;
+    }
+
+    private List<List<Integer>> getLastWinningNumberToExclude() {
+        return new ArrayList<>(this.Histories.stream()
+                .map(historic -> Arrays.stream(historic.getWinningNumbers().split(","))
+                        .map(Integer::valueOf)
+                        .limit(generatedWinningNumber)
+                        .toList())
+                .limit(nbExcludeWinningNumber)
+                .toList());
+    }
+
+    private List<List<Integer>> getLastStarNumberToExclude() {
+        return new ArrayList<>(this.Histories.stream()
+                .map(historic -> Arrays.stream(historic.getWinningNumbers().split(","))
+                        .map(Integer::valueOf)
+                        .skip(generatedWinningNumber)
+                        .toList())
+                .limit(1)
+                .toList());
+    }
+
+    private void extendExcludeList() {
+        listExcludeLotteryNumber.addAll(getLastWinningNumberToExclude());
+        List<List<Integer>> listExcludeLotteryNumber = getLastStarNumberToExclude();
+        if (!listExcludeLotteryNumber.isEmpty()) {
+            listExcludeLotteryStar.addAll(getLastStarNumberToExclude().getFirst());
+        }
     }
 }

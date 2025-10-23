@@ -11,7 +11,7 @@ public class GermanLottoLotteryFactory extends LotteryFactory {
     @Override
     protected Lottery createLottery(LotteryConfig config) throws Exception {
         this.validateLotteryConfig(config);
-        return new GermanLottoLottery(config.getWinningNumber(), config.getWinningStar());
+        return new GermanLottoLottery(config.getWinningNumber(), config.getWinningStar(), config.getNbExcludeWinningNumber());
     }
 
     @Override

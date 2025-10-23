@@ -16,8 +16,8 @@ public class EuroJackpotLottery extends Lottery {
     private final static int generatedWinningNumber = 5;
     private final static int generatedWinningStar = 2;
 
-    public EuroJackpotLottery(List<Integer> winningNumber, List<Integer> winningStar) {
-        super(filePath, url, listExcludeLotteryNumber, listExcludeLotteryStar, myLotteryHistory, winningNumber, winningStar, generatedWinningNumber, generatedWinningStar);
+    public EuroJackpotLottery(List<Integer> winningNumber, List<Integer> winningStar, int nbExcludeWinningNumber) {
+        super(filePath, url, listExcludeLotteryNumber, listExcludeLotteryStar, myLotteryHistory, winningNumber, winningStar, nbExcludeWinningNumber, generatedWinningNumber, generatedWinningStar);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class EuroJackpotLottery extends Lottery {
 
     @Override
     protected Map.Entry<DayOfWeek, DayOfWeek> getLotteryDays() {
-        return new AbstractMap.SimpleEntry<>(DayOfWeek.FRIDAY, DayOfWeek.THURSDAY);
+        return new AbstractMap.SimpleEntry<>(DayOfWeek.FRIDAY, DayOfWeek.TUESDAY);
     }
 
     private final static List<List<Integer>> myLotteryHistory = List.of(
