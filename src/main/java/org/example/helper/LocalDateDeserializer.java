@@ -14,7 +14,7 @@ public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
 
     @Override
     public LocalDate deserialize(JsonParser p, DeserializationContext context) throws IOException {
-        if (p.getValueAsString() != null) {
+        if (p.getValueAsString() != null && !"-".equals(p.getValueAsString())) {
             return LocalDate.parse(p.getValueAsString(), fmt);
         }
         System.out.println("Could not local date deserialize " + p.getValueAsString());

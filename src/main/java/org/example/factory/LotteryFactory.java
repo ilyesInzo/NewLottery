@@ -6,16 +6,16 @@ import org.example.dto.Lottery;
 public abstract class LotteryFactory {
     public void executeLottery(LotteryConfig config) throws Exception {
         Lottery lottery = createLottery(config);
-        if (config.isCheckMyHistory()) {
-            lottery.checkMyHistory();
-        }
-
         if (config.isGenerateNumber()) {
             lottery.generateLottery(config.getNbWinningLottery(), config.isFindStars());
         }
 
         if (config.isShowProbability()) {
-            lottery.showWinningProbability(config.getNbWinningLottery(), config.getWinningNumberFound(), config.isFindStars());
+            lottery.showWinningProbability(config.getNbWinningLottery(), config.getWinningNumberFound(), config.isFindStars(), config.getWinningNumberEnum());
+        }
+
+        if (config.isCheckMyHistory()) {
+            lottery.checkMyHistory(config.getWinningNumberEnum());
         }
     }
 

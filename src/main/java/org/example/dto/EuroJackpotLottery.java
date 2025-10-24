@@ -8,7 +8,7 @@ import java.util.*;
 public class EuroJackpotLottery extends Lottery {
 
     private final static String filePath = "src/histories_EuroJackpot.json";
-    private final static String url = "https://www.magayo.com/api/results.php?api_key=mCVwFtv9c6DSDL2ESb&game=eurojackpot&draw=%s";
+    private final static String url = "https://www.magayo.com/api/results.php?api_key=hE2TRvwNLU35J7bxNc&game=eurojackpot&draw=%s";
     private final static List<List<Integer>> listExcludeLotteryNumber = List.of(
             List.of(1, 2, 49, 50),
             List.of(24, 25, 19, 30, 31, 32, 36));

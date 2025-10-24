@@ -1,11 +1,13 @@
 package org.example.config;
 
 import org.example.Lottery;
+import org.example.WinningNumberEnum;
 
 import java.util.List;
 
 public class LotteryConfig {
     private Lottery lottery;
+    private WinningNumberEnum winningNumberEnum = WinningNumberEnum.CUSTOM;
 
     private boolean showProbability = false;
     private boolean checkMyHistory = false;
@@ -107,5 +109,13 @@ public class LotteryConfig {
 
     public void setNbExcludeWinningNumber(int nbExcludeWinningNumber) {
         this.nbExcludeWinningNumber = nbExcludeWinningNumber;
+    }
+
+    public WinningNumberEnum getWinningNumberEnum() {
+        return winningNumberEnum;
+    }
+
+    public void setWinningNumberEnum(WinningNumberEnum winningNumberEnum) {
+        this.winningNumberEnum = winningNumberEnum;
     }
 }

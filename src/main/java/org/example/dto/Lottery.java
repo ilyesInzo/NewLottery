@@ -1,5 +1,6 @@
 package org.example.dto;
 
+import org.example.WinningNumberEnum;
 import org.example.helper.HistoricService;
 import org.example.model.Historic;
 import org.example.model.Jackpot;
@@ -59,13 +60,14 @@ public abstract class Lottery {
             allPossibleWinningNumbers.addAll(jackpot.getWinningChain());
             allPossibleWinningStarNumbers.addAll(jackpot.getWinningStarChain());
         }
+        // TODO use this generated value and use it as winningNumber and winning star for probability
         System.out.println("Winning Numbers Occ");
         displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
         System.out.println("Winning Stars Occ");
         displayWinningBestOccurrence(allPossibleWinningStarNumbers, generatedWinningStar);
     }
 
-    public void checkMyHistory() {
+    public void checkMyHistory(WinningNumberEnum winningNumberEnum) {
         Map<Long, List<List<Integer>>> map = myLotteryHistory.stream()
                 .collect(Collectors
                         .groupingBy(item -> item.stream().filter(winningNumber::contains).count(),
@@ -75,7 +77,7 @@ public abstract class Lottery {
         System.out.println("For " + winningNumber + " Max numbers found '" + entry.getKey() + "' in my histories \n" + entry.getValue());
     }
 
-    public void showWinningProbability(int nbWinningLottery, int winningNumberFound, boolean isFoundStar) {
+    public void showWinningProbability(int nbWinningLottery, int winningNumberFound, boolean isFoundStar, WinningNumberEnum winningNumberEnum) {
         double tryCount = 0;
         for (int i = 0; i < nbWinningLottery; i++) {
             tryCount = tryCount
@@ -164,6 +166,19 @@ public abstract class Lottery {
         List<List<Integer>> listExcludeLotteryNumber = getLastStarNumberToExclude();
         if (!listExcludeLotteryNumber.isEmpty()) {
             listExcludeLotteryStar.addAll(getLastStarNumberToExclude().getFirst());
+        }
+    }
+
+    private void setEffectiveWinningNumber(WinningNumberEnum winningNumberEnum) {
+        switch (winningNumberEnum) {
+            case GENERATED -> {
+
+
+                break;
+            }
+            case HISTORY -> {
+                break;
+            }
         }
     }
 }
