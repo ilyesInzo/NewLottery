@@ -74,8 +74,9 @@ public abstract class Lottery {
         this.winningStarGenerated = map.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
-    public void checkMyHistory() {
-        Map<Long, List<List<Integer>>> map = myLotteryHistory.stream()
+    public void checkHistory(boolean myHistory) {
+        var history = myHistory ? myLotteryHistory : getLastWinningNumberToExclude(true);
+        Map<Long, List<List<Integer>>> map = history.stream()
                 .collect(Collectors
                         .groupingBy(item -> item.stream().filter(winningNumber::contains).count(),
                                 Collectors.mapping(integers -> integers, Collectors.toList())));
@@ -101,7 +102,7 @@ public abstract class Lottery {
                 this.winningStar = winningStarGenerated;
             }
             case HISTORY -> {
-                List<List<Integer>> lastWinningNumberHistoric = this.getLastWinningNumberToExclude();
+                List<List<Integer>> lastWinningNumberHistoric = this.getLastWinningNumberToExclude(false);
                 if (!lastWinningNumberHistoric.isEmpty()) {
                     this.winningNumber = lastWinningNumberHistoric.getFirst();
                 }
@@ -171,13 +172,13 @@ public abstract class Lottery {
         return tryCount;
     }
 
-    private List<List<Integer>> getLastWinningNumberToExclude() {
+    private List<List<Integer>> getLastWinningNumberToExclude(boolean all) {
         return new ArrayList<>(this.Histories.stream()
                 .map(historic -> Arrays.stream(historic.getWinningNumbers().split(","))
                         .map(Integer::valueOf)
                         .limit(generatedWinningNumber)
                         .toList())
-                .limit(nbExcludeWinningNumber)
+                .limit(all ? 10000 : nbExcludeWinningNumber)
                 .toList());
     }
 
@@ -192,7 +193,7 @@ public abstract class Lottery {
     }
 
     private void extendExcludeList() {
-        listExcludeLotteryNumber.addAll(getLastWinningNumberToExclude());
+        listExcludeLotteryNumber.addAll(getLastWinningNumberToExclude(false));
         List<List<Integer>> listExcludeLotteryNumber = getLastStarNumberToExclude();
         if (!listExcludeLotteryNumber.isEmpty()) {
             listExcludeLotteryStar.addAll(getLastStarNumberToExclude().getFirst());

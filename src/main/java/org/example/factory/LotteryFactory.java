@@ -18,7 +18,11 @@ public abstract class LotteryFactory {
         }
 
         if (config.isCheckMyHistory()) {
-            lottery.checkMyHistory();
+            lottery.checkHistory(true);
+        }
+
+        if (config.isCheckLotteryHistory()) {
+            lottery.checkHistory(false);
         }
     }
 

@@ -7,12 +7,11 @@ import java.util.List;
 
 public class LotteryConfig {
     private Lottery lottery;
-    private WinningNumberEnum winningNumberEnum = WinningNumberEnum.HISTORY;
+    private WinningNumberEnum winningNumberEnum = WinningNumberEnum.GENERATED;
 
     private boolean showProbability = false;
     private boolean checkMyHistory = false;
-    // TODO new
-    private boolean checkLotteryHistory = false;
+    private boolean checkLotteryHistory = true;
     private boolean generateNumber = true;
 
     private int nbWinningLottery = 100;
