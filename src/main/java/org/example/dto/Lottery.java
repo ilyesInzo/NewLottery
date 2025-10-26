@@ -23,6 +23,9 @@ public abstract class Lottery {
     private int generatedWinningStar;
     private int nbExcludeWinningNumber;
 
+    private List<Integer> winningNumberGenerated;
+    private List<Integer> winningStarGenerated;
+
     private List<Historic> Histories;
 
     private final HistoricService historicService;
@@ -62,12 +65,16 @@ public abstract class Lottery {
         }
         // TODO use this generated value and use it as winningNumber and winning star for probability
         System.out.println("Winning Numbers Occ");
-        displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
+        Map<Integer, Integer> map = displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
+        System.out.println(map);
+        this.winningNumberGenerated = map.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
         System.out.println("Winning Stars Occ");
-        displayWinningBestOccurrence(allPossibleWinningStarNumbers, generatedWinningStar);
+        map = displayWinningBestOccurrence(allPossibleWinningStarNumbers, generatedWinningStar);
+        System.out.println(map);
+        this.winningStarGenerated = map.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
-    public void checkMyHistory(WinningNumberEnum winningNumberEnum) {
+    public void checkMyHistory() {
         Map<Long, List<List<Integer>>> map = myLotteryHistory.stream()
                 .collect(Collectors
                         .groupingBy(item -> item.stream().filter(winningNumber::contains).count(),
@@ -77,7 +84,7 @@ public abstract class Lottery {
         System.out.println("For " + winningNumber + " Max numbers found '" + entry.getKey() + "' in my histories \n" + entry.getValue());
     }
 
-    public void showWinningProbability(int nbWinningLottery, int winningNumberFound, boolean isFoundStar, WinningNumberEnum winningNumberEnum) {
+    public void showWinningProbability(int nbWinningLottery, int winningNumberFound, boolean isFoundStar) {
         double tryCount = 0;
         for (int i = 0; i < nbWinningLottery; i++) {
             tryCount = tryCount
@@ -85,6 +92,29 @@ public abstract class Lottery {
                     listExcludeLotteryStar, listExcludeLotteryNumber));
         }
         System.out.println(tryCount / nbWinningLottery);
+    }
+
+    public void setEffectiveWinningNumber(WinningNumberEnum winningNumberEnum) {
+        switch (winningNumberEnum) {
+            case GENERATED -> {
+                this.winningNumber = winningNumberGenerated;
+                this.winningStar = winningStarGenerated;
+            }
+            case HISTORY -> {
+                List<List<Integer>> lastWinningNumberHistoric = this.getLastWinningNumberToExclude();
+                if (!lastWinningNumberHistoric.isEmpty()) {
+                    this.winningNumber = lastWinningNumberHistoric.getFirst();
+                }
+                List<List<Integer>> lastStarNumberHistoric = this.getLastStarNumberToExclude();
+                if (!lastStarNumberHistoric.isEmpty()) {
+                    this.winningStar = lastStarNumberHistoric.getFirst();
+                }
+            }
+        }
+
+        System.out.println("Effective Winning Numbers Used: " + winningNumberEnum);
+        System.out.println(this.winningNumber);
+        System.out.println(this.winningStar);
     }
 
     protected void GetResult(boolean isFoundStar, List<Integer> lastStartList, Random rand, List<Integer> baseList,
@@ -106,18 +136,18 @@ public abstract class Lottery {
 
     protected abstract Map.Entry<DayOfWeek, DayOfWeek> getLotteryDays();
 
-    private void displayWinningBestOccurrence(List<Integer> allPossibleWinningNumbers, int limit) {
+    private Map<Integer, Integer> displayWinningBestOccurrence(List<Integer> allPossibleWinningNumbers, int limit) {
 
         Map<Integer, Integer> map = new HashMap<>();
         Set<Integer> winningSet = new HashSet<>(allPossibleWinningNumbers);
         for (Integer winningNumber : winningSet)
             map.put(winningNumber, Collections.frequency(allPossibleWinningNumbers, winningNumber));
 
-        map.entrySet()
+        return map.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue((integer, t1) -> t1 - integer))
                 .limit(limit)
-                .forEach(System.out::println);
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private int whenToWin(List<Integer> winningChain, List<Integer> winningStarChain, int numberFound,
@@ -169,16 +199,4 @@ public abstract class Lottery {
         }
     }
 
-    private void setEffectiveWinningNumber(WinningNumberEnum winningNumberEnum) {
-        switch (winningNumberEnum) {
-            case GENERATED -> {
-
-
-                break;
-            }
-            case HISTORY -> {
-                break;
-            }
-        }
-    }
 }

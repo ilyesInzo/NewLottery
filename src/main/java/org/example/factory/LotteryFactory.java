@@ -1,21 +1,24 @@
 package org.example.factory;
 
+import org.example.WinningNumberEnum;
 import org.example.config.LotteryConfig;
 import org.example.dto.Lottery;
 
 public abstract class LotteryFactory {
     public void executeLottery(LotteryConfig config) throws Exception {
         Lottery lottery = createLottery(config);
-        if (config.isGenerateNumber()) {
+        if (config.isGenerateNumber() || WinningNumberEnum.GENERATED == config.getWinningNumberEnum()) {
             lottery.generateLottery(config.getNbWinningLottery(), config.isFindStars());
         }
 
+        lottery.setEffectiveWinningNumber(config.getWinningNumberEnum());
+
         if (config.isShowProbability()) {
-            lottery.showWinningProbability(config.getNbWinningLottery(), config.getWinningNumberFound(), config.isFindStars(), config.getWinningNumberEnum());
+            lottery.showWinningProbability(config.getNbWinningLottery(), config.getWinningNumberFound(), config.isFindStars());
         }
 
         if (config.isCheckMyHistory()) {
-            lottery.checkMyHistory(config.getWinningNumberEnum());
+            lottery.checkMyHistory();
         }
     }
 

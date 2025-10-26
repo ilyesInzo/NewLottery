@@ -7,7 +7,7 @@ import java.util.List;
 
 public class LotteryConfig {
     private Lottery lottery;
-    private WinningNumberEnum winningNumberEnum = WinningNumberEnum.CUSTOM;
+    private WinningNumberEnum winningNumberEnum = WinningNumberEnum.HISTORY;
 
     private boolean showProbability = false;
     private boolean checkMyHistory = false;
