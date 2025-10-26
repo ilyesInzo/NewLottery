@@ -26,7 +26,7 @@ public class MagayoLotteryApiService {
             return null;
         }
         try {
-            System.out.println("Sending Request To URL: " + url);
+            System.out.println("Sending Request To URL: " + url.formatted(date));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(url.formatted(date)))
                     .GET()
