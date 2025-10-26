@@ -10,7 +10,7 @@ public class LotteryConfig {
     private WinningNumberEnum winningNumberEnum = WinningNumberEnum.GENERATED;
 
     private boolean showProbability = false;
-    private boolean checkMyHistory = false;
+    private boolean checkMyHistory = true;
     private boolean checkLotteryHistory = true;
     private boolean generateNumber = true;
 

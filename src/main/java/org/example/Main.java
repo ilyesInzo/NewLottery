@@ -37,8 +37,8 @@ public class Main {
         config.setLottery(lottery);
         switch (config.getLottery()) {
             case EURO_JACKPOT -> {
-                config.setWinningStar(List.of(3, 10));
-                config.setWinningNumber(List.of(18, 21, 34, 35, 46));
+                config.setWinningStar(List.of(5, 6));
+                config.setWinningNumber(List.of(7, 15, 16, 23, 29));
             }
             case GERMAN_6AUS49 -> {
                 config.setWinningStar(List.of(5));

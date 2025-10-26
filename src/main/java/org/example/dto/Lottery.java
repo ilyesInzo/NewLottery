@@ -82,7 +82,8 @@ public abstract class Lottery {
                                 Collectors.mapping(integers -> integers, Collectors.toList())));
         Map.Entry<Long, List<List<Integer>>> entry = map.entrySet().stream()
                 .max((entry1, entry2) -> Math.toIntExact((entry1.getKey() - entry2.getKey()))).get();
-        System.out.println("For " + winningNumber + " Max numbers found '" + entry.getKey() + "' in my histories \n" + entry.getValue());
+        String message = myHistory ? "my" : "old";
+        System.out.println("For " + winningNumber + " Max numbers found '" + entry.getKey() + "' in " + message + " histories \n" + entry.getValue());
     }
 
     public void showWinningProbability(int nbWinningLottery, int winningNumberFound, boolean isFoundStar) {

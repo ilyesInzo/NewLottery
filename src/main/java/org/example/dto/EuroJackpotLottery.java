@@ -54,6 +54,7 @@ public class EuroJackpotLottery extends Lottery {
     }
 
     private final static List<List<Integer>> myLotteryHistory = List.of(
+            List.of(7, 15, 16, 23, 29), // 5,6 26.10.2025
             List.of(14, 18, 28, 33, 37), // 1,8 17.10.2025
             List.of(7, 15, 26, 29, 35), // 4,6 14.10.2025
             List.of(6, 15, 26, 29, 35), // 4,6 10.10.2025
