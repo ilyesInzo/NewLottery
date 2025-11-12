@@ -67,7 +67,7 @@ public abstract class Lottery {
         System.out.println("Winning Numbers Occ");
         Map<Integer, Integer> map = displayWinningBestOccurrence(allPossibleWinningNumbers, generatedWinningNumber);
         System.out.println(map);
-        this.winningNumberGenerated = map.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        this.winningNumberGenerated = map.entrySet().stream().map(Map.Entry::getKey).sorted().collect(Collectors.toList());
         System.out.println("Winning Stars Occ");
         map = displayWinningBestOccurrence(allPossibleWinningStarNumbers, generatedWinningStar);
         System.out.println(map);
@@ -199,6 +199,8 @@ public abstract class Lottery {
         if (!listExcludeLotteryNumber.isEmpty()) {
             listExcludeLotteryStar.addAll(getLastStarNumberToExclude().getFirst());
         }
+        System.out.println("Winning to exclude " + this.listExcludeLotteryNumber);
+        System.out.println("Winning Star to exclude " + listExcludeLotteryStar);
     }
 
 }

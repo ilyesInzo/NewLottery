@@ -59,8 +59,7 @@ public class MagayoLotteryApiService {
                     .uri(new URI(url.formatted(date)))
                     .GET()
                     .build();
-
-            CompletableFuture<HttpResponse<String>> response = HttpClient.newBuilder()
+            HttpClient.newBuilder()
                     .build()
                     .sendAsync(request, HttpResponse.BodyHandlers.ofString());
 

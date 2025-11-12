@@ -16,8 +16,8 @@ public class LotteryConfig {
 
     private int nbWinningLottery = 100;
     private int winningNumberFound = 5;
-    private int nbExcludeWinningNumber = 5;
-    private boolean findStars = false;
+    private int nbExcludeWinningNumber = 3;
+    private boolean findStars = true;
 
     private List<Integer> winningNumber;
     private List<Integer> winningStar;

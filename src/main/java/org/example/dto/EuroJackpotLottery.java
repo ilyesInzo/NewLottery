@@ -8,11 +8,11 @@ import java.util.*;
 public class EuroJackpotLottery extends Lottery {
 
     private final static String filePath = "src/histories_EuroJackpot.json";
-    private final static String url = "https://www.magayo.com/api/results.php?api_key=hE2TRvwNLU35J7bxNc&game=eurojackpot&draw=%s";
+    private final static String url = "https://www.magayo.com/api/results.php?api_key=uqEkQr6HF2wKjuFCNr&game=eurojackpot&draw=%s";
     private final static List<List<Integer>> listExcludeLotteryNumber = List.of(
             List.of(1, 2, 49, 50),
             List.of(24, 25, 19, 30, 31, 32, 36));
-    private final static List<Integer> listExcludeLotteryStar = List.of(3, 10);
+    private final static List<Integer> listExcludeLotteryStar = List.of();
     private final static int generatedWinningNumber = 5;
     private final static int generatedWinningStar = 2;
 
@@ -54,6 +54,7 @@ public class EuroJackpotLottery extends Lottery {
     }
 
     private final static List<List<Integer>> myLotteryHistory = List.of(
+            List.of(7, 15, 16, 23, 29), // 6,8 04.10.2025
             List.of(7, 15, 16, 23, 29), // 5,6 26.10.2025
             List.of(14, 18, 28, 33, 37), // 1,8 17.10.2025
             List.of(7, 15, 26, 29, 35), // 4,6 14.10.2025

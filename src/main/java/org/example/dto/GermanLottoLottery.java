@@ -51,6 +51,9 @@ public class GermanLottoLottery extends Lottery {
     }
 
     private final static List<List<Integer>> myLotteryHistory = List.of(
+            List.of(24, 27, 30, 42, 43, 46), // 2 05.11.2025
+            List.of(10, 12, 23, 27, 33, 38), // 7 29.10.2025
+            List.of(33, 38, 10, 27, 43, 12), // 7 27.10.2025
             List.of(12, 22, 24, 31, 35, 40), // 7 27.09.2025
             List.of(6, 11, 16, 27, 29, 32), // 5 24.09.2025
             List.of(11, 13, 18, 28, 39, 40), // 4 20.09.2025
@@ -62,5 +65,5 @@ public class GermanLottoLottery extends Lottery {
             List.of(5, 11, 14, 39, 43, 46), // 4 30.07.2025
             List.of(4, 22, 26, 29, 45, 46), // 5 03.05.2025
             List.of(5, 19, 31, 37, 40, 47), // 6, 23.04.2025
-            List.of(18, 22, 25, 31, 45, 45));// 9 15.02.2025
+            List.of(18, 22, 25, 31, 45, 46));// 9 15.02.2025
 }

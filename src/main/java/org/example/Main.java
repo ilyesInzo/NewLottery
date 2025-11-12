@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        /*for (int i = 0; i < 1; i++) {
+       /* while (true) {
             MagayoLotteryApiService magayoLotteryApiService = new MagayoLotteryApiService();
             magayoLotteryApiService.fetchHistoricByDate("https://www.magayo.com/api/results.php?api_key=test&game=euromillions", List.of(), LocalDate.now());
         }*/
